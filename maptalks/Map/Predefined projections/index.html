@@ -1,0 +1,87 @@
+<!DOCTYPE html> 
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/maptalks/dist/maptalks.css">
+  <script type="text/javascript" src="https://unpkg.com/maptalks/dist/maptalks.js"></script>
+<title>toolbar</title>
+</head>
+
+<body>
+<div class="title left">EPSG:3857</div>
+<div class="title right">baidu</div>
+<div id="map-3857" class="left"></div>
+<div id="map-bd09" class="right"></div>
+<div class="title left">EPSG:4326</div>
+<div class="title right">identity</div>
+<div id="map-4326" class="left"></div>
+<div id="map-identity" class="right"></div>
+
+<script type="text/javascript">
+var center=[115.00,32.00];
+	var map3857=new maptalks.Map('map-3857',{
+		center:center,
+		zoom:4,
+		centerCross:true,
+		baseLayer:new maptalks.TileLayer('base',{
+			urlTemplate:'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png',
+			subdomains:['a','b','c','d','e']
+		}),
+		layers:[new maptalks.VectorLayer('v')],
+		attribution:{
+			content:'&copy:<a href="http://www.osm.org" target="_blank">OpenStreetMap</a>contributors'
+		}
+	});
+	var zoom= map3857.getZoom(),
+	extent= map3857.getExtent();
+
+	map3857.setMinZoom(zoom - 2);
+	map3857.setMaxZoom(zoom + 1);
+	map3857.setMaxExtent(extent);
+	map3857.getLayer('v').addGeometry(new maptalks.Polygon(extent.toArray()).updateSymbol({'polygonOpacity':0,'lineWidth':1}));
+
+	var mapBD=new maptalks.Map('map-bd09',{
+		center:center,
+		zoom:4,
+		minZoom:1,
+		maxZoom:19,
+		spatialReference:{
+			projection:'baidu'
+		},
+		baseLayer:new maptalks.TileLayer('base',{
+			urlTemplate:'http://online{s}.map.bdimg.com/tile/?qt=tile&x={x}&y={y}&z={z}&styles=pl',
+			subdomains:[0,1,2,3,4,5,6,7,8,9]
+		}),
+		attribution:{
+			content:'&copy:<a href="http://map.baidu.com target="_blank">Baidu</a>'
+		}
+	})
+	var map4326=new maptalks.Map('map-4326',{
+		center:center,
+		zoom:4,
+		minZoom:1,
+		maxZoom:18,
+		spatialReference:
+		{
+			projection:'EPSG:4326'
+		},
+		baseLayer:new maptalks.TileLayer('base',{
+			tileSystem:[1,-1,-180,90],
+			crossOrigin:'Anonymous',
+			urlTemplate:'http://t{s}.tianditu.com/DataServer?T=vec_c&x={x}&y={y}&l={z}',
+			subdomains:['1','2','3','4','5']
+		}),
+		layers:[new maptalks.TileLayer('road',{
+			crossOrigin:'Anonymous',
+			urlTemplate:'http://t{s}.tianditu.com/DataServer?T=cva_c&x={x}&y={y}&l={z}',
+			subdomains:['1','2','3','4','5'],
+			opacity:1
+		})],
+		attribution:{
+			content:'&copy:<a href="http://www.tianditu.cn" target="_blank">Tianditu</a>'
+		}
+	});
+</script>
+</body>
+</html>
